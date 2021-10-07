@@ -20,7 +20,7 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv(".\\scores.csv", header = 0, index_col = 0)
+pAb_github = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
 pAb_escape = pAb_escape_prepro(pAb_github)
 pAb_escape = pAb_escape[pAb_escape[3] > 12]
 pAb_escape.reset_index(drop = True, inplace = True)

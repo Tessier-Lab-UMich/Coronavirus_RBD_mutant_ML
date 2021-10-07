@@ -7,7 +7,7 @@ Created on Tue Sep  7 12:54:17 2021
 
 from utils import *
 
-pAb_github = pd.read_csv(".\\scores.csv", header = 0, index_col = 0)
+pAb_github = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
 pAb_escape = pAb_escape_prepro(pAb_github)
 
 #tuning sequence observation cutoff
