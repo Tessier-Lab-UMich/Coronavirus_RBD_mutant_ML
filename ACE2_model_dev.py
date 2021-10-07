@@ -7,7 +7,8 @@ Created on Tue Sep  7 12:53:48 2021
 
 from utils import *
 
-ace_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_DMS\\results\\binding_Kds\\binding_Kds.csv", header = 0, index_col = 0)
+
+ace_github = pd.read_csv(".\\binding_Kds.csv", header = 0, index_col = 0)
 ace_binding = ace_binding_prepro(ace_github)
 
 #tuning sequence observation cutoff

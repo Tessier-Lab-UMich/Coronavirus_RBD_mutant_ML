@@ -8,7 +8,7 @@ Created on Tue Sep  7 13:48:18 2021
 from utils import *
 
 #ace data import and training
-ace_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_DMS\\results\\binding_Kds\\binding_Kds.csv", header = 0, index_col = 0)
+ace_github = pd.read_csv(".\\binding_Kds.csv", header = 0, index_col = 0)
 ace_binding = ace_binding_prepro(ace_github)
 ace_binding = ace_binding[ace_binding[3] > 53]
 ace_binding.reset_index(drop = True, inplace = True)
@@ -20,7 +20,7 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
+pAb_github = pd.read_csv(".\\scores.csv", header = 0, index_col = 0)
 pAb_escape = pAb_escape_prepro(pAb_github)
 pAb_escape = pAb_escape[pAb_escape[3] > 12]
 pAb_escape.reset_index(drop = True, inplace = True)

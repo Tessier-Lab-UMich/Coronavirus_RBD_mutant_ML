@@ -8,7 +8,7 @@ Created on Tue Sep  7 14:40:23 2021
 from utils import *
 
 #ace data import and training
-ace_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_DMS\\results\\binding_Kds\\binding_Kds.csv", header = 0, index_col = 0)
+ace_github = pd.read_csv(".\\binding_Kds.csv", header = 0, index_col = 0)
 ace_binding = ace_binding_prepro(ace_github)
 ace_binding = ace_binding[ace_binding[3] > 53]
 ace_binding.reset_index(drop = True, inplace = True)
@@ -20,7 +20,7 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
+pAb_github = pd.read_csv(".\\scores.csv", header = 0, index_col = 0)
 pAb_escape = pAb_escape_prepro(pAb_github)
 pAb_escape = pAb_escape[pAb_escape[3] > 12]
 pAb_escape.reset_index(drop = True, inplace = True)
@@ -38,9 +38,9 @@ pAb_variant = pAb_ridge.predict(variant_ohe)
 
 
 #%%
-mut_count_ace = pd.read_csv("C:\\Users\\makow\\Documents\\Research\\Data Analysis\\3.12.21_covid_comp\\mut_count_ace.csv", header = 0, index_col = 0)
+mut_count_ace = pd.read_csv(".\\mut_count_ace.csv", header = 0, index_col = 0)
 mut_count_ace.columns = np.arange(0,201)
-mut_count_pAb = pd.read_csv("C:\\Users\\makow\\Documents\\Research\\Data Analysis\\3.12.21_covid_comp\\mut_count_pAb.csv", header = 0, index_col = 0)
+mut_count_pAb = pd.read_csv(".\\mut_count_pAb.csv", header = 0, index_col = 0)
 mut_count_pAb.columns = np.arange(0,201)
 
 sites = np.arange(331,532,1)
@@ -185,21 +185,19 @@ plt.yticks([0, 5, 10, 15], fontsize = 26)
 
 
 #%%
-"""
 colormap12 = ['white', 'blue']
 cmap12 = LinearSegmentedColormap.from_list("mycmap", colormap12)
-extreme_mut_heatmap_ace = pd.read_csv("C:\\Users\\makow\\Documents\\Research\\Data Analysis\\3.12.21_covid_comp\\8.20.21_heatmap_muts_ace2.csv", index_col = 0, header = 0)
+extreme_mut_heatmap_ace = pd.read_csv(".\\8.20.21_heatmap_muts_ace2.csv", index_col = 0, header = 0)
 plt.figure(figsize = (20,4))
 sns.heatmap(extreme_mut_heatmap_ace, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f')
 plt.xticks(fontsize = 22)
 plt.yticks(fontsize = 22)
 
 
-extreme_mut_heatmap_pAb = pd.read_csv("C:\\Users\\makow\\Documents\\Research\\Data Analysis\\3.12.21_covid_comp\\8.20.21_heatmap_muts_pAb.csv", index_col = 0, header = 0)
+extreme_mut_heatmap_pAb = pd.read_csv(".\\8.20.21_heatmap_muts_pAb.csv", index_col = 0, header = 0)
 plt.figure(figsize = (20,4))
 sns.heatmap(extreme_mut_heatmap_pAb, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f')
 plt.xticks(fontsize = 22)
 plt.yticks(fontsize = 22)
 
-"""
 
