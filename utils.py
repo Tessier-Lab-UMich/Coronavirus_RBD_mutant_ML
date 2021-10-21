@@ -108,7 +108,7 @@ def ace_binding_prepro(ace_binding_github):
             mut.pop(-1)
             res = int(''.join(mut)) - 1
             seq[res] = add
-        ace_binding.append([''.join(seq), row[2], row[8], row[1]])
+        ace_binding.append([''.join(seq), row[2], row[8], row[1], muts])
     ace_binding = pd.DataFrame(ace_binding)
     ace_binding = ace_binding[ace_binding[1] > 6]
     ace_binding = ace_binding[ace_binding[1] < 13]
@@ -130,7 +130,7 @@ def pAb_escape_prepro(pAb_github):
             mut.pop(-1)
             res = int(''.join(mut)) - 1
             seq[res] = add
-        pAb_escape.append([''.join(seq), row[0], row[5], row[3]])
+        pAb_escape.append([''.join(seq), row[0], row[5], row[3], muts])
     pAb_escape = pd.DataFrame(pAb_escape)
     return pAb_escape
 
