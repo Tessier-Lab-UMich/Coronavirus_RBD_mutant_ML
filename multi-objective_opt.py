@@ -21,10 +21,8 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
-pAb_github['pat'] = pAb_github.index.str[:3]
-pAb_escape = pAb_escape_prepro(pAb_github[pAb_github['pat'].isin(pat_name)])
-pAb_escape = pAb_escape[pAb_escape[3] > 15]
+pAb_escape = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
+pAb_escape = pAb_escape[pAb_escape.iloc[:,3] > 15]
 pAb_escape.reset_index(drop = True, inplace = True)
 pAb_escape_ohe = ohe_encode(pAb_escape)
 
@@ -52,7 +50,7 @@ co_op_samp = co_op.sample(10000)
 
 #%%
 #co-optimization figure
-plt.figure(0)
+plt.figure(2)
 plt.scatter(co_op.loc[co_op['Mut Num'] > 2, 'ACE2'], co_op.loc[co_op['Mut Num'] > 2, 'pAb Escape']*100, s = 75, c = 'blue', edgecolor = 'k', linewidth = 0.25)
 plt.scatter(co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'ACE2'], co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'pAb Escape']*100, s = 75, c = 'darkgray', edgecolor = 'k', linewidth = 0.25)
 

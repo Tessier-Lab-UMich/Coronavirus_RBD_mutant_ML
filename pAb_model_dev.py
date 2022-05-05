@@ -7,8 +7,10 @@ Created on Tue Sep  7 12:54:17 2021
 
 from utils import *
 
-#pAb_github = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
-pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
+
+"""
+#data processing if scores are imported from Bloom Github
+pAb_github = pd.read_csv("...\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
 pat_name = ['12C', '13_', '1C_', '22C', '23C', '23_', '24C', '25C', '25_', '6C_', '7C_']
 
 pAb_github['pat'] = pAb_github.index.str[:3]
@@ -18,6 +20,9 @@ for i in pat_name:
     pAb_pat_i = pAb_github[pAb_github['pat'] == i]
     pAb_pat.append(pAb_escape_prepro(pAb_pat_i))
 pAb_escape = pAb_escape_prepro(pAb_github[pAb_github['pat'].isin(pat_name)])
+"""
+
+pAb_escape = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
 print(sc.stats.spearmanr(pAb_escape.iloc[:,2], 100*pAb_escape.iloc[:,1]))
 
 #%%

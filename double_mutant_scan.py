@@ -20,16 +20,13 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
-pat_name = ['12C', '13_', '1C_', '22C', '23C', '23_', '24C', '25C', '25_', '6C_', '7C_']
-pAb_github['pat'] = pAb_github.index.str[:3]
-pAb_escape = pAb_escape_prepro(pAb_github[pAb_github['pat'].isin(pat_name)])
-pAb_escape = pAb_escape[pAb_escape[3] > 17.5]
+pAb_escape = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
+pAb_escape = pAb_escape[pAb_escape.iloc[:,3] > 15]
 pAb_escape.reset_index(drop = True, inplace = True)
 pAb_escape_ohe = ohe_encode(pAb_escape)
 
 #pAb model trianing
-pAb_ridge = Ridge(alpha = 10.50)
+pAb_ridge = Ridge(alpha = 6.2)
 pAb_ridge.fit(pAb_escape_ohe, pAb_escape.iloc[:,1])
 pAb_escape_predict = pd.DataFrame(pAb_ridge.predict(pAb_escape_ohe))
 
@@ -218,14 +215,14 @@ co_op_samp = wt_scan_predictions.sample(5000)
 #%%
 colormap12 = ['white', 'blue']
 cmap12 = LinearSegmentedColormap.from_list("mycmap", colormap12)
-extreme_mut_heatmap_ace = pd.read_csv(".\\8.20.21_heatmap_muts_ace2_v2.csv", index_col = 0, header = 0)
+extreme_mut_heatmap_ace = pd.read_csv(".\\8.20.21_heatmap_muts_ace2.csv", index_col = 0, header = 0)
 plt.figure(figsize = (12,4))
 sns.heatmap(extreme_mut_heatmap_ace, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f', vmin = 10.15)
 plt.xticks(rotation = 90, fontsize = 22)
 plt.yticks(fontsize = 22)
 
 
-extreme_mut_heatmap_pAb = pd.read_csv(".\\8.20.21_heatmap_muts_pAb_v2.csv", index_col = 0, header = 0)
+extreme_mut_heatmap_pAb = pd.read_csv(".\\8.20.21_heatmap_muts_pAb.csv", index_col = 0, header = 0)
 plt.figure(figsize = (12,4))
 sns.heatmap(extreme_mut_heatmap_pAb, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f', vmin = -14, vmax = 20)
 plt.xticks(rotation = 90, fontsize = 22)
