@@ -6,6 +6,7 @@ Created on Tue Sep  7 13:48:18 2021
 """
 
 from utils import *
+pat_name = ['12C', '13_', '1C_', '22C', '23C', '23_', '24C', '25C', '25_', '6C_', '7C_']
 
 #ace data import and training
 ace_github = pd.read_csv(".\\binding_Kds.csv", header = 0, index_col = 0)
@@ -20,14 +21,15 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
-pAb_escape = pAb_escape_prepro(pAb_github)
-pAb_escape = pAb_escape[pAb_escape[3] > 12]
+pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
+pAb_github['pat'] = pAb_github.index.str[:3]
+pAb_escape = pAb_escape_prepro(pAb_github[pAb_github['pat'].isin(pat_name)])
+pAb_escape = pAb_escape[pAb_escape[3] > 15]
 pAb_escape.reset_index(drop = True, inplace = True)
 pAb_escape_ohe = ohe_encode(pAb_escape)
 
 #pAb model trianing
-pAb_ridge = Ridge(alpha = 12.07)
+pAb_ridge = Ridge(alpha = 6.2)
 pAb_ridge.fit(pAb_escape_ohe, pAb_escape.iloc[:,1])
 pAb_escape_predict = pd.DataFrame(pAb_ridge.predict(pAb_escape_ohe))
 
@@ -54,7 +56,7 @@ plt.figure(0)
 plt.scatter(co_op.loc[co_op['Mut Num'] > 2, 'ACE2'], co_op.loc[co_op['Mut Num'] > 2, 'pAb Escape']*100, s = 75, c = 'blue', edgecolor = 'k', linewidth = 0.25)
 plt.scatter(co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'ACE2'], co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'pAb Escape']*100, s = 75, c = 'darkgray', edgecolor = 'k', linewidth = 0.25)
 
-plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,6), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
+plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,7), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
 plt.xlim(5.8, 13)
 plt.ylim(-5.2, 45)
 plt.xticks([6, 8, 10, 12], fontsize = 26)
@@ -71,7 +73,7 @@ plt.figure()
 plt.fill_between(x, y1, y2, color='darkgray', alpha=0.25, edgecolor = 'k', linewidth = 0.25)
 plt.scatter(co_op.loc[co_op['Mut Num'] > 2, 'ACE2'], co_op.loc[co_op['Mut Num'] > 2, 'pAb Escape']*100, s = 75, c = 'blue', edgecolor = 'k', linewidth = 0.25)
 plt.scatter(co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'ACE2'], co_op_samp.loc[co_op_samp['Mut Num'] == 2, 'pAb Escape']*100, s = 75, c = 'darkgray', edgecolor = 'k', linewidth = 0.25)
-plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,6), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
+plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,7), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
 plt.ylim(-2, 17)
 plt.xlim(10.25, 12.25)
 plt.xticks([10.5, 11.0, 11.5, 12.0], fontsize = 26)

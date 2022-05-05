@@ -20,14 +20,16 @@ ace_ridge.fit(ace_binding_ohe, ace_binding.iloc[:,1])
 ace_binding_predict = pd.DataFrame(ace_ridge.predict(ace_binding_ohe))
 
 #pAb data import and processing
-pAb_github = pd.read_csv(".\\scores.txt", header = 0, index_col = 0)
-pAb_escape = pAb_escape_prepro(pAb_github)
-pAb_escape = pAb_escape[pAb_escape[3] > 12]
+pAb_github = pd.read_csv("C:\\Users\\makow\\Documents\\GitHub\\SARS-CoV-2-RBD_MAP_HAARVI_sera\\results\\escape_scores\\scores.csv", header = 0, index_col = 0)
+pat_name = ['12C', '13_', '1C_', '22C', '23C', '23_', '24C', '25C', '25_', '6C_', '7C_']
+pAb_github['pat'] = pAb_github.index.str[:3]
+pAb_escape = pAb_escape_prepro(pAb_github[pAb_github['pat'].isin(pat_name)])
+pAb_escape = pAb_escape[pAb_escape[3] > 17.5]
 pAb_escape.reset_index(drop = True, inplace = True)
 pAb_escape_ohe = ohe_encode(pAb_escape)
 
 #pAb model trianing
-pAb_ridge = Ridge(alpha = 12.07)
+pAb_ridge = Ridge(alpha = 10.50)
 pAb_ridge.fit(pAb_escape_ohe, pAb_escape.iloc[:,1])
 pAb_escape_predict = pd.DataFrame(pAb_ridge.predict(pAb_escape_ohe))
 
@@ -77,7 +79,6 @@ for i in sites:
 wt_scan_seqs = pd.DataFrame(wt_scan_seqs)
 
 #%%
-
 wt_scan = pd.DataFrame()
 wt_scan_predictions = pd.DataFrame()
 for i in np.arange(0,8300000,100000):
@@ -119,6 +120,7 @@ for index, row in concern_region.iterrows():
 single_nuc = pd.DataFrame(single_nuc)
 single_nuc.set_index(concern_region.index, inplace = True)
 
+concern_region_predictions.to_csv('Supporting Dataset #1.1.csv', index = True, header = True)
 
 #%%
 x = [ace_variant[2], 12.25]
@@ -130,7 +132,7 @@ plt.fill_between(x, y1, y2, color='darkgray', alpha=0.25, edgecolor = 'k', linew
 plt.scatter(wt_scan_predictions_samp.loc[(wt_scan_predictions_samp.iloc[:,0] < ace_variant[2]) | (wt_scan_predictions_samp.iloc[:,1] < 0),'ACE'], wt_scan_predictions_samp.loc[(wt_scan_predictions_samp.iloc[:,0] < ace_variant[2]) | (wt_scan_predictions_samp.iloc[:,1] < 0),'pAb']*100, s = 75, c = 'white', edgecolor = 'k', linewidth = 0.25)
 plt.scatter(concern_region_predictions_samp.iloc[:,0], concern_region_predictions_samp.iloc[:,1]*100, s = 75, c = 'dimgray', edgecolor = 'k', linewidth = 0.25)
 
-plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,6), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
+plt.scatter(ace_variant, pAb_variant*100, c = np.arange(0,7), cmap = cmap_var, s = 150, edgecolor = 'k', linewidth = 0.25)
 plt.ylim(-2, 17)
 plt.xlim(10.25, 12.25)
 plt.xticks([10.5, 11.0, 11.5, 12.0], fontsize = 26)
@@ -139,8 +141,11 @@ plt.yticks([0, 5, 10, 15], fontsize = 26)
 
 #%%
 #isolating variants at the Pareto frontier (Figure 3A)
-pareto_predictions = wt_scan_predictions.loc[(((wt_scan_predictions.iloc[:,1])+(0.1187*(wt_scan_predictions.iloc[:,0]))>1.442) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
-pareto = wt_scan_seqs.loc[(((wt_scan_predictions.iloc[:,1])+(0.1187*(wt_scan_predictions.iloc[:,0]))>1.442) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
+pareto_predictions = wt_scan_predictions.loc[(((wt_scan_predictions.iloc[:,1])+(0.1185*(wt_scan_predictions.iloc[:,0]))>1.440) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
+pareto = wt_scan_seqs.loc[(((wt_scan_predictions.iloc[:,1])+(0.1185*(wt_scan_predictions.iloc[:,0]))>1.440) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
+
+pareto_predictions.to_csv('Supporting Dataset #2.1.csv', index = True, header = True)
+
 pareto_predictions.columns = [0,1]
 pareto_predictions.drop_duplicates(keep = 'first', inplace = True)
 pareto.drop_duplicates(subset = 0, keep = 'first', inplace = True)
@@ -162,14 +167,38 @@ for index, row in pareto.iterrows():
 single_nuc = pd.DataFrame(single_nuc)
 single_nuc.set_index(pareto.index, inplace = True)
 
-pareto_predictions = pd.concat([pareto_predictions, single_nuc], axis = 1, ignore_index = False)
-pareto_predictions.columns = np.arange(0,5)
-pareto = pareto.loc[pareto_predictions.iloc[:,4]==2]
-pareto_predictions = pareto_predictions.loc[pareto_predictions.iloc[:,4]==2]
+### need to add every site two before an S or a T and remove it ist mutated to N
+glycan = []
+for index, row in pareto.iterrows():
+    if np.isin(row[1], glycan_begin):
+        glycan.append(1)
+    elif np.isin(row[4], glycan_begin):
+        glycan.append(1)
+    elif (np.isin(row[1], glycan_end_st)) & (row[3] == 'T'):
+        glycan.append(1)
+    elif (np.isin(row[1], glycan_end_st)) & (row[3] == 'S'):
+        glycan.append(1)
+    elif (np.isin(row[4], glycan_end_st)) & (row[6] == 'T'):
+        glycan.append(1)
+    elif (np.isin(row[4], glycan_end_st)) & (row[6] == 'S'):
+        glycan.append(1)
+    elif (np.isin(row[1], glycan_end_n)) & (row[3] == 'N'):
+        glycan.append(1)
+    elif (np.isin(row[4], glycan_end_n)) & (row[6] == 'N'):
+        glycan.append(1)
+    else:
+        glycan.append(0)
+glycan = pd.DataFrame(glycan)
+glycan.index = pareto.index
+
+pareto_predictions = pd.concat([pareto_predictions, single_nuc, glycan], axis = 1, ignore_index = False)
+pareto_predictions.columns = np.arange(0,6)
+pareto = pareto.loc[(pareto_predictions.iloc[:,4]==2) & (pareto_predictions.iloc[:,5]==0)]
+pareto_predictions = pareto_predictions.loc[(pareto_predictions.iloc[:,4]==2)  & (pareto_predictions.iloc[:,5]==0)]
 
 x2 = [ace_variant[2],12.1, 12.25]
 y5 = [18,0,0]
-y6 = [17,17,17]
+y6 = [17.1,17.1,17.1]
 
 plt.figure()
 plt.fill_between(x, y1, y2, color='darkgray', alpha=0.25, edgecolor = 'k', linewidth = 0.25)
@@ -183,21 +212,23 @@ plt.xlim(10.25, 12.25)
 plt.xticks([10.5, 11.0, 11.5, 12.0], fontsize = 26)
 plt.yticks([0, 5, 10, 15], fontsize = 26)
 
+co_op_samp = wt_scan_predictions.sample(5000)
+
 
 #%%
 colormap12 = ['white', 'blue']
 cmap12 = LinearSegmentedColormap.from_list("mycmap", colormap12)
-extreme_mut_heatmap_ace = pd.read_csv(".\\8.20.21_heatmap_muts_ace2.csv", index_col = 0, header = 0)
-plt.figure(figsize = (20,4))
-sns.heatmap(extreme_mut_heatmap_ace, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f')
-plt.xticks(fontsize = 22)
+extreme_mut_heatmap_ace = pd.read_csv(".\\8.20.21_heatmap_muts_ace2_v2.csv", index_col = 0, header = 0)
+plt.figure(figsize = (12,4))
+sns.heatmap(extreme_mut_heatmap_ace, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f', vmin = 10.15)
+plt.xticks(rotation = 90, fontsize = 22)
 plt.yticks(fontsize = 22)
 
 
-extreme_mut_heatmap_pAb = pd.read_csv(".\\8.20.21_heatmap_muts_pAb.csv", index_col = 0, header = 0)
-plt.figure(figsize = (20,4))
-sns.heatmap(extreme_mut_heatmap_pAb, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f')
-plt.xticks(fontsize = 22)
+extreme_mut_heatmap_pAb = pd.read_csv(".\\8.20.21_heatmap_muts_pAb_v2.csv", index_col = 0, header = 0)
+plt.figure(figsize = (12,4))
+sns.heatmap(extreme_mut_heatmap_pAb, cmap = 'bwr', annot = True, linewidths = 0.1, linecolor = 'silver', annot_kws = {'fontsize': 13}, fmt = '.1f', vmin = -14, vmax = 20)
+plt.xticks(rotation = 90, fontsize = 22)
 plt.yticks(fontsize = 22)
 
 
