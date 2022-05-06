@@ -98,6 +98,7 @@ concern_region_predictions = wt_scan_predictions.loc[(wt_scan_predictions.iloc[:
 concern_region = wt_scan_seqs.loc[(wt_scan_predictions.iloc[:,0] > ace_variant[2]) & (wt_scan_predictions.iloc[:,1] > 0),:]
 concern_region_predictions.columns = [0,1]
 concern_region.drop_duplicates(subset=0, keep='first', inplace = True)
+concern_region_predictions.drop_duplicates(subset=0, keep='first', inplace = True)
 concern_region_predictions_samp = concern_region_predictions.sample(1000)
 
 single_nuc = []
@@ -116,8 +117,6 @@ for index, row in concern_region.iterrows():
     single_nuc.append([ham1, min(hams), ham1+min(hams)])
 single_nuc = pd.DataFrame(single_nuc)
 single_nuc.set_index(concern_region.index, inplace = True)
-
-concern_region_predictions.to_csv('Supporting Dataset #1.1.csv', index = True, header = True)
 
 #%%
 x = [ace_variant[2], 12.25]
@@ -138,10 +137,8 @@ plt.yticks([0, 5, 10, 15], fontsize = 26)
 
 #%%
 #isolating variants at the Pareto frontier (Figure 3A)
-pareto_predictions = wt_scan_predictions.loc[(((wt_scan_predictions.iloc[:,1])+(0.1185*(wt_scan_predictions.iloc[:,0]))>1.440) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
-pareto = wt_scan_seqs.loc[(((wt_scan_predictions.iloc[:,1])+(0.1185*(wt_scan_predictions.iloc[:,0]))>1.440) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
-
-pareto_predictions.to_csv('Supporting Dataset #2.1.csv', index = True, header = True)
+pareto_predictions = wt_scan_predictions.loc[(((wt_scan_predictions.iloc[:,1])+(0.1186*(wt_scan_predictions.iloc[:,0]))>1.43872) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
+pareto = wt_scan_seqs.loc[(((wt_scan_predictions.iloc[:,1])+(0.1186*(wt_scan_predictions.iloc[:,0]))>1.43872) & ((wt_scan_predictions.iloc[:,0])>ace_variant[2])),:]
 
 pareto_predictions.columns = [0,1]
 pareto_predictions.drop_duplicates(keep = 'first', inplace = True)

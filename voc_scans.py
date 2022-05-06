@@ -227,7 +227,7 @@ wt_scan_v2 = pd.concat([wt_vals, variant_scan_predictions.iloc[seq_ind[0]:seq_in
 wt_scan_v2.iloc[:,1] = wt_scan_v2.iloc[:,1]*100
 wt_scan_v2['mut'] = mutation
 
-escapes = ['WT', 'Y365F', 'V367A', 'V367F', 'K386E', 'L452Q', 'L452R', 'Y453F', 'N460K', 'E484A', 'E484K', 'E484V', 'Q498H','H519D','H519N']
+escapes = ['WT', 'Y365F', 'V367A', 'V367F', 'K386E', 'L452Q', 'L452R', 'Y453F', 'N460K', 'T478K','E484A', 'E484K', 'E484V', 'Q498H','H519D','H519N']
 wt_scan_v3_escape = wt_scan_v2[wt_scan_v2['mut'].isin(escapes)]
 
 omicron = ['G339D', 'S371L', 'S373P', 'S375F', 'K417N', 'N440K' ,'G446S', 'S477N', 'T478K', 'E484A', 'Q493R' ,'G496S', 'Q498R', 'N501Y', 'Y505H']
